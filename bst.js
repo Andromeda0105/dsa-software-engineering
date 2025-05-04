@@ -9,6 +9,7 @@ class Node {
 }
 
 let root;
+let resultText = "";
 function setup() {
     createCanvas(windowWidth, windowHeight);
     root = null; // 一開始是空樹
@@ -18,6 +19,9 @@ function setup() {
     insertButton = createButton('insert');
     insertButton.position(130, 20);
     insertButton.mousePressed(onInsertPressed);
+  searchButton = createButton('search');
+  searchButton.position(200, 20);
+  searchButton.mousePressed(onSearchPressed);
 }
 function draw() {
     if (keyIsPressed === true && keyCode === ENTER) onInsertPressed();
@@ -25,6 +29,10 @@ function draw() {
     textAlign(CENTER, CENTER);
     textSize(20);
     drawTree(root);
+  fill(50);
+  textAlign(LEFT, TOP);
+  textSize(24);
+  text(resultText, 20, 80);
 }
 function drawTree(node) {
     updatePositions(root, width / 2, 100, width / 6);
@@ -107,4 +115,28 @@ function onInsertPressed() {
         insert(value);
         inputBox.value('');
     }
+}
+
+function onSearchPressed(){
+  let value = float(inputBox.value());
+  if (!isNaN(value)) {
+    resultText = "searching... 🔍";
+    search(root, value);
+    inputBox.value('');
+  }
+}
+
+function search(node, value){
+  if (node == null) {
+    resultText="didn't find 💔"
+    return;
+  }
+  highlight(node);
+  setTimeout(() => {
+    if(value < node.value) search (node.left, value);
+    else if(value > node.value) search(node.right, value);
+    else {
+      resultText = "found 💖"
+    }
+  }, 700)
 }
