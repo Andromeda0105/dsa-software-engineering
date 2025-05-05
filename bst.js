@@ -5,35 +5,43 @@ class Node {
         this.right = null;
         this.x = x;
         this.y = y;
+        this.parent = null;
     }
 }
 
 let root;
 let resultText = "";
+
 function setup() {
     createCanvas(windowWidth, windowHeight);
     root = null; // 一開始是空樹
     inputBox = createInput();
     inputBox.position(20, 20);
     inputBox.size(100);
+
     insertButton = createButton('insert');
     insertButton.position(130, 20);
     insertButton.mousePressed(onInsertPressed);
-  searchButton = createButton('search');
-  searchButton.position(200, 20);
-  searchButton.mousePressed(onSearchPressed);
+    searchButton = createButton('search');
+    searchButton.position(200, 20);
+    searchButton.mousePressed(onSearchPressed);
+    RemoveButton = createButton('Remove');
+    RemoveButton.position(270, 20);
+    RemoveButton.mousePressed(onRemovePressed);
 }
+
 function draw() {
-    if (keyIsPressed === true && keyCode === ENTER) onInsertPressed();
+    //if (keyIsPressed === true && keyCode === ENTER) onInsertPressed();
     background(255, 220, 250);
     textAlign(CENTER, CENTER);
     textSize(20);
     drawTree(root);
-  fill(50);
-  textAlign(LEFT, TOP);
-  textSize(24);
-  text(resultText, 20, 80);
+    fill(50);
+    textAlign(LEFT, TOP);
+    textSize(24);
+    text(resultText, 20, 80);
 }
+
 function drawTree(node) {
     updatePositions(root, width / 2, 100, width / 6);
     if (node == null) {
@@ -62,12 +70,19 @@ function drawTree(node) {
 
 // 插入新數字
 function insert(value) {
-    if (root == null) root = new Node(value);
-    else insertNode(root, value);
+    if (root == null) {
+        root = new Node(value)
+        root.parent = null;
+    } else insertNode(root, value);
 
 }
+
 function highlight(node) {
-    node.highlighted = 1; setTimeout(() => { node.highlighted = 0 }, 900)
+    if (node == null) return
+    node.highlighted = 1;
+    setTimeout(() => {
+        node.highlighted = 0
+    }, 900)
 }
 
 // 插入的輔助函數
@@ -75,17 +90,19 @@ function insertNode(node, value) {
 
     setTimeout(() => {
         if (value < node.value) {
-            if (node.left == null)
+            if (node.left == null) {
                 node.left = new Node(value);
-            else
-                insertNode(node.left, value);
+                node.left.parent = node
+            } else
+                insertNode(node.left, value, node);
             highlight(node.left);
 
         } else if (value > node.value) {
 
-            if (node.right == null)
+            if (node.right == null) {
                 node.right = new Node(value);
-            else
+                node.right.parent = node
+            } else
                 insertNode(node.right, value);
             highlight(node.right);
 
@@ -111,32 +128,95 @@ function updatePositions(node, x, y, spacing) {
 function onInsertPressed() {
     let value = float(inputBox.value());
     if (!isNaN(value)) {
-        if(root) highlight(root);
+        if (root) highlight(root);
         insert(value);
         inputBox.value('');
     }
 }
 
-function onSearchPressed(){
-  let value = float(inputBox.value());
-  if (!isNaN(value)) {
-    resultText = "searching... 🔍";
-    search(root, value);
-    inputBox.value('');
-  }
+function onSearchPressed() {
+    let value = float(inputBox.value());
+    if (!isNaN(value)) {
+        resultText = "searching... 🔍";
+        search(root, value);
+        inputBox.value('');
+    }
 }
 
-function search(node, value){
-  if (node == null) {
-    resultText="didn't find 💔"
-    return;
-  }
-  highlight(node);
-  setTimeout(() => {
-    if(value < node.value) search (node.left, value);
-    else if(value > node.value) search(node.right, value);
-    else {
-      resultText = "found 💖"
+function onRemovePressed() {
+    let value = float(inputBox.value());
+    if (!isNaN(value)) {
+        resultText = "searching... 🔍";
+        Remove(root, value);
+        inputBox.value('');
     }
-  }, 700)
+}
+
+function search(node, value) {
+    if (node == null) {
+        resultText = "didn't find 💔"
+        return;
+    }
+    highlight(node);
+    setTimeout(() => {
+        if (value < node.value) search(node.left, value);
+        else if (value > node.value) search(node.right, value);
+        else {
+            resultText = "found 💖"
+        }
+    }, 700)
+}
+
+function setToBe(node, to) {
+    if (node == root) root = to
+    else if (node.parent.left == node) {
+        node.parent.left = to
+        if (to != null) to.parent = node.parent
+    }
+    else if (node.parent.right == node) {
+        node.parent.right = to
+        if (to != null) to.parent = node.parent
+    }
+}
+
+function leftMostInSubtree(node) {
+    if (node.left == null) return node
+    let next = leftMostInSubtree(node.left)
+    return (next ? next : node)
+}
+
+function Remove(node, value) {
+    if (node == null) {
+        resultText = "didn't find 💔"
+        return;
+    }
+    highlight(node);
+    setTimeout(() => {
+        if (value < node.value) Remove(node.left, value);
+        else if (value > node.value) Remove(node.right, value);
+        else {
+            resultText = "removing..."
+            setTimeout(() => {
+                resultText = "removed."
+            }, 1400)
+            if (node.left && node.right) {
+                let inOrderSucessor = leftMostInSubtree(node.right)
+                highlight(inOrderSucessor)
+                setTimeout(() => {
+                    node.value = inOrderSucessor.value
+                    setToBe(inOrderSucessor, inOrderSucessor.right)
+                }, 1400)
+
+            }
+            else{
+                let toBeSwapped = node.left || node.right || null
+                highlight(toBeSwapped)
+                setTimeout(() => {
+                    setToBe(node, toBeSwapped)
+                }, 1400)
+            }
+
+        }
+
+    }, 700)
 }
