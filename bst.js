@@ -5,10 +5,42 @@ class Node {
         this.right = null;
         this.x = x;
         this.y = y;
+      this.height=1
         this.parent = null;
     }
 }
 
+function getHeight(node){
+  return (node == null)? 0 : node.height;
+}
+function updateHeight(node){
+  node.height = 1 + Math.max(getHeight(node.left), getHeight(node.right));
+}
+function getBalance(node){
+  return (node == null)? 0: getHeight(node.left) - getHeight(node.right);
+}
+function rotateRight(y) {
+  let x = y.left;
+  let T2 = x.right;
+  x.right = y;
+  y.left = T2;
+  if(T2) T2.parent = y;
+  x.parent = y.parent;
+  y.parent = x;
+  updateHeight(x);
+  updateHeight(y);
+  return x;
+}
+function rotateLeft(x){
+  let y = x.right;
+  let T2 = y.left;
+  y.left = x;
+  x.right = T2;
+  if(T2) T2.parent = x;
+  y.parent = x.parent;
+  x.parent = y;
+  return y;
+}
 let root;
 let resultText = "";
 
@@ -195,9 +227,9 @@ function Remove(node, value) {
         if (value < node.value) Remove(node.left, value);
         else if (value > node.value) Remove(node.right, value);
         else {
-            resultText = "removing..."
+            resultText = "removing...❗"
             setTimeout(() => {
-                resultText = "removed."
+                resultText = "successfully removed.🎵"
             }, 1400)
             if (node.left && node.right) {
                 let inOrderSucessor = leftMostInSubtree(node.right)
