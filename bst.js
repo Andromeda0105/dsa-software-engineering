@@ -101,10 +101,10 @@ function updatePositions(node, x, y, spacing) {
     node.x = x;
     node.y = y;
     if (node.left != null) {
-        updatePositions(node.left, x - spacing, y + 100, spacing / 1.5);
+        updatePositions(node.left, x - spacing, y + 100, spacing / 1.7);
     }
     if (node.right != null) {
-        updatePositions(node.right, x + spacing, y + 100, spacing / 1.5);
+        updatePositions(node.right, x + spacing, y + 100, spacing / 1.7);
     }
 }
 
