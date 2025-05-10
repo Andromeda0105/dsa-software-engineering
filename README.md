@@ -6,9 +6,9 @@ this project illustrate how an **AVL tree** work to ensure the nature of binary 
 - ✅the height of tree can balance itself so that all the operation can be done in $O(log n)$
 ## usage
 there is a input box on the top center of the screen , you can type any real number and doing operation by press the Insert, Delete, Search button besides it.
-:::warning
-it is recommend that only insert the number with less than 4 digit otherwise the text will exceed the node
-:::
+> ⚠️ **Note:**  
+> It is recommended to insert numbers with fewer than 4 digits,  
+> or the text may overflow the node circle.
 ### insertion
 type a number and press the insert button and it will search the position where the node should be and insert it and than rotate it to keep the tree balance
 ### deletion
