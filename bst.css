@@ -1,0 +1,97 @@
+
+h2 {
+    text-align: center;
+    font-size: 30px;
+    padding: 15px;
+    font-weight: 800;
+}
+
+#canvas-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+#controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+#inputBox {
+    width: 35%;
+    height: 30px;
+    border: 2px solid gray;
+    border-radius: 10px;
+    box-shadow: none;
+    font-size: 99%;
+    outline: none;
+    caret-color: black;
+    text-align: center;
+    transition: transform 0.5s;
+}
+
+#inputBox:hover {
+    border: 2px solid black;
+}
+
+button {
+    position: relative;
+    min-width: 100px;
+    background: transparent;
+    border: none;
+    border-radius: 50px;
+    font-size: 22px;
+    font-weight: bold;
+    text-align: center;
+    padding: 10px 20px;
+    cursor: pointer;
+    color: black;
+}
+
+button span {
+    position: relative;
+    z-index: 1;
+    color: black;
+    transition: color 0.3s;
+}
+
+button:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 25px;
+    height: 100%;
+    border-radius: 10px;
+    background: transparent;
+    transition: all 0.3s ease-in-out;
+    z-index: 0;
+}
+
+button:hover:before {
+    background: black;
+    width: 100%;
+}
+
+button:hover span {
+    color: white;
+}
+
+body {
+    background-color: antiquewhite;
+}
+
+canvas {
+    background-color: white;
+    border-radius: 20px;
+}
+
+#message{
+    text-align:center;
+    font-size:22px;
+    font-weight:bold;
+    color:red;
+    margin:10px;
+}

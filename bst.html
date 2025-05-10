@@ -1,11 +1,22 @@
+
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8"></meta>
-    <title>bst</title>
+    <meta charset="UTF-8">
+    <title>BST Animation</title>
+    <link rel="stylesheet" href="bst.css">
     <script src="p5.js"></script>
     <script src="bst.js"></script>
   </head>
   <body>
+    <h2>BST animation</h2>
+    <div id="controls">
+      <input id="inputBox" type="text" placeholder="Input">
+      <button onclick="insertNode()"><span>Insert</span></button>
+      <button onclick="deleteNode()"><span>Delete</span></button>
+      <button onclick="searchNode()"><span>Search</span></button>
+    </div>
+    <div id="message" style="text-align:center;font-size:22px;font-weight:bold;color:red;margin:10px;"></div>
+    <div id="canvas-container"></div>
   </body>
 </html>
