@@ -38,9 +38,17 @@ class BST {
     }, 1000);  
   }
 
-  delete(val) {
-    this.root = this._delete(this.root, val, null);   // 同理
+  delete(val){
+    const onDone = () => {
+      setTimeout(() => {
+        this.root = this._rebalance(this.root);  
+      }, 1000);
+    };
+
+    // 開工：從 root 開始拔，並把 onDone 傳進去
+    this.root = this._deleteRaw(this.root, val, null, onDone);
   }
+
 
   show() {
     this._relayout(this.root, width / 2, 80, width / 4);
@@ -118,45 +126,50 @@ class BST {
     }
     return node;        // 已平衡
   }
-  _delete(node, val, parent) {
-    if (!node) return null;
 
-    if (val < node.value) {
-      node.left  = this._delete(node.left,  val, node);
-      return node;
-    }
-    if (val > node.value) {
-      node.right = this._delete(node.right, val, node);
-      return node;
-    }
+  _deleteRaw(node, val, parent, done){
+    if(!node) return null;                       // 沒找到
 
-    if (node.left && node.right) {
-      // (a) 收集「右子樹一路往左」的路徑
+    /* 1. 普通 BST 尋路 */
+    if(val < node.value){
+      node.left  = this._deleteRaw(node.left,  val, node, done);
+    }else if(val > node.value){
+      node.right = this._deleteRaw(node.right, val, node, done);
+    }else{
+      /* 2. 找到要刪的節點 */
+      /* (a) ≤1 個小孩：直接拔掉 */
+      if(!node.left || !node.right){
+        const child = node.left ? node.left : node.right;
+        if(child) child.parent = parent;
+        done?.();                                 // 告訴外層「我刪完了！」
+        return child;                             // ← 回傳給上一層接線
+      }
+
+      /* (b) 兩個小孩：先播 successor 動畫，再真正移除 */
       const path = [];
       let cur = node.right;
-      while (cur) {
+      while(cur){
         path.push(cur);
-        if (cur.left) cur = cur.left;
+        if(cur.left) cur = cur.left;
         else break;
       }
-      const self = this;                     // 保存 this
+      const self = this;
       animatePath(path, () => {
-        const succ = path[path.length - 1];  // 路徑最後一顆 = successor
-        node.value = succ.value;             // 把值搬上來
-        node.right = self._delete(node.right,
-                                  succ.value,
-                                  node);     // 把 successor 拔掉
+        const succ = path[path.length - 1];
+        node.value = succ.value;                  // 把 successor 值搬上來
+        node.right = self._deleteRaw(node.right,
+                                    succ.value,
+                                    node,
+                                    done);       // 真正拔掉 successor
+        // 這裡 **不要** rebalance！延遲到 onDone
       });
-
-      return node;                           // 先回傳，實際更新在 callback 內
+      return node;                               // 先交還 (動畫還在跑)
     }
 
-    /* ───── 只有 0 or 1 個小孩：照舊立即處理 ───── */
-    const child = node.left ? node.left : node.right;   // 可能是 null
-    if (child) child.parent = parent;                   // 更新 parent 指標
-    return child;                                       // 回傳給上一層接線
+    /* 3. 往回走：只更新高度，不旋轉 */
+    this._updateH(node);
+    return node;
   }
-
   _min(n) { return n.left ? this._min(n.left) : n; }
 
   /* ─── 私有：重新排版 ─── */
