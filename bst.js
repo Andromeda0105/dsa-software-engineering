@@ -10,6 +10,7 @@ class Node {
     this.right = null;
     this.x = x;
     this.y = y;
+    this.height=1;
   }
 
   display() {
@@ -30,8 +31,11 @@ class BST {
   constructor() {
     this.root = null;
   }
-  insert(val) {
-    this.root = this._insert(this.root, val, null);   // parent 先傳 null
+  insert(val){
+    this.root = this._insertRaw(this.root, val);
+    setTimeout(() => {
+      this.root = this._rebalance(this.root);
+    }, 1000);  
   }
 
   delete(val) {
@@ -42,25 +46,81 @@ class BST {
     this._relayout(this.root, width / 2, 80, width / 4);
     this._draw(this.root);
   }
-  _insert(node, val, parent) {
-    if (!node) {                 // new node
-      const n = new Node(val);
-      n.parent = parent;
-      return n;
-    }
-    if (val < node.value) {
-      node.left  = this._insert(node.left,  val, node);
-    } else if (val > node.value) {
-      node.right = this._insert(node.right, val, node);
-    }
+  _getH(n){
+    if(n == null) return 0;
+    return n.height;
+  }
+  _updateH(n){
+    if(n==null) return;
+    n.height = 1 + Math.max(this._getH(n.left), this._getH(n.right));
+  }
+  _balance(n){
+    return this._getH(n.left) - this._getH(n.right);
+  }
+  _rotateRight(y) {
+    const x  = y.left;
+    const T2 = x.right;
+
+    x.right = y;
+    y.left  = T2;
+
+    this._updateH(y);
+    this._updateH(x);
+    return x;              // 回傳新根
+  }
+  _rotateLeft(x) {
+    const y  = x.right;
+    const T2 = y.left;
+
+    y.left  = x;
+    x.right = T2;
+
+    this._updateH(x);
+    this._updateH(y);
+    return y;
+  }
+  _insertRaw(node, val){
+    if(!node) return new Node(val);
+
+    if(val < node.value)      node.left  = this._insertRaw(node.left,  val);
+    else if(val > node.value) node.right = this._insertRaw(node.right, val);
+    else return node;                                   // 重複值直接忽略
+
+    this._updateH(node);
     return node;
   }
+  _rebalance(node){
+    if(!node) return null;
 
-/* --------- 取代原本的 _delete ---------- */
+    /* 先遞迴 Rebalance 左右子樹 */
+    node.left  = this._rebalance(node.left);
+    node.right = this._rebalance(node.right);
+
+    /* 更新高度，再檢查失衡 */
+    this._updateH(node);
+    const bal = this._balance(node);
+
+    // LL
+    if(bal > 1 && this._balance(node.left) >= 0)
+      return this._rotateRight(node);
+    // LR
+    if(bal > 1 && this._balance(node.left) < 0){
+      node.left = this._rotateLeft(node.left);
+      return this._rotateRight(node);
+    }
+    // RR
+    if(bal < -1 && this._balance(node.right) <= 0)
+      return this._rotateLeft(node);
+    // RL
+    if(bal < -1 && this._balance(node.right) > 0){
+      node.right = this._rotateRight(node.right);
+      return this._rotateLeft(node);
+    }
+    return node;        // 已平衡
+  }
   _delete(node, val, parent) {
     if (!node) return null;
 
-    /* ❶ 還沒遇到目標，就往左右子樹找 */
     if (val < node.value) {
       node.left  = this._delete(node.left,  val, node);
       return node;
@@ -70,9 +130,6 @@ class BST {
       return node;
     }
 
-    /* ❷ 找到了要刪的 node！*/
-
-    /* ───── 兩個小孩：先播 successor 動畫，再真正刪 ───── */
     if (node.left && node.right) {
       // (a) 收集「右子樹一路往左」的路徑
       const path = [];
@@ -82,8 +139,6 @@ class BST {
         if (cur.left) cur = cur.left;
         else break;
       }
-
-      // (b) 播動畫；播完再搬值＋遞迴刪 successor
       const self = this;                     // 保存 this
       animatePath(path, () => {
         const succ = path[path.length - 1];  // 路徑最後一顆 = successor
