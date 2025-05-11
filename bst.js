@@ -48,8 +48,6 @@ class BST {
         this.root = this._rebalance(this.root);  
       }, 1000);
     };
-
-    // 開工：從 root 開始拔，並把 onDone 傳進去
     this.root = this._deleteRaw(this.root, val, null, onDone);
   }
 
@@ -103,27 +101,18 @@ class BST {
   }
   _rebalance(node){
     if(!node) return null;
-
-    /* 先遞迴 Rebalance 左右子樹 */
     node.left  = this._rebalance(node.left);
     node.right = this._rebalance(node.right);
-
-    /* 更新高度，再檢查失衡 */
     this._updateH(node);
     const bal = this._balance(node);
-
-    // LL
     if(bal > 1 && this._balance(node.left) >= 0)
       return this._rotateRight(node);
-    // LR
     if(bal > 1 && this._balance(node.left) < 0){
       node.left = this._rotateLeft(node.left);
       return this._rotateRight(node);
     }
-    // RR
     if(bal < -1 && this._balance(node.right) <= 0)
       return this._rotateLeft(node);
-    // RL
     if(bal < -1 && this._balance(node.right) > 0){
       node.right = this._rotateRight(node.right);
       return this._rotateLeft(node);
