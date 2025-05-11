@@ -30,6 +30,7 @@ insert 50 40 30 20 in order and we can see that it will balance itself
 ![60](./src/20.png)
 delete 50 and it will also balance itself
 ![delete50](./src/delete50.png)
-for the vedio example
-![video example](./src/example.webm)
 ## Contribution
+deletion and basic animation : 凌嘉悌
+user interface : 彭愷恩
+avl tree insertion and deletion : 洪德朗
