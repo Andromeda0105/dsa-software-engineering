@@ -4,16 +4,20 @@ let highlightPath = [];
 let currentHighlightIndex = 0;
 
 class Node {
-  constructor(value, x, y) {
+  constructor(value, x=0, y=0) {
     this.value = value;
     this.left = null;
     this.right = null;
     this.x = x;
     this.y = y;
+    this.tx=x;
+    this.ty=y;
     this.height=1;
   }
 
   display() {
+    this.x = lerp(this.x, this.tx, 0.05);
+    this.y = lerp(this.y, this.ty, 0.05);
     if (highlightPath[currentHighlightIndex] === this) {
       fill(255, 200, 200);
     } else {
@@ -175,8 +179,8 @@ class BST {
   /* ─── 私有：重新排版 ─── */
   _relayout(node, x, y, gap) {
     if (!node) return;
-    node.x = x;
-    node.y = y;
+    node.tx = x;
+    node.ty = y;
     this._relayout(node.left,  x - gap, y + 100, gap / 2);
     this._relayout(node.right, x + gap, y + 100, gap / 2);
   }
