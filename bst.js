@@ -3,6 +3,10 @@ let tree;
 let highlightPath = [];
 let currentHighlightIndex = 0;
 
+function isValidNumber(str) {
+  return /^-?\d+(\.\d+)?$/.test(str.trim());
+}
+
 class Node {
   constructor(value, x=0, y=0) {
     this.value = value;
@@ -242,6 +246,10 @@ function draw() {
 
 function insertNode() {
   const valueStr = document.getElementById('inputBox').value;
+  if(!isValidNumber(valueStr)){
+    console.log('invalid input');
+    return
+  }
   const value = parseFloat(valueStr);
   if (isNaN(valueStr) || valueStr === '') return;
 
@@ -263,6 +271,10 @@ function insertNode() {
 
 function deleteNode() {
   const valueStr = document.getElementById('inputBox').value;
+  if(!isValidNumber(valueStr)){
+    console.log('invalid input');
+    return
+  }
   const value = parseFloat(valueStr);
   if (isNaN(valueStr) || valueStr === '') return;
 
@@ -282,6 +294,10 @@ function deleteNode() {
 
 function searchNode() {
   const valueStr = document.getElementById('inputBox').value;
+  if(!isValidNumber(valueStr)){
+    console.log('invalid input');
+    return
+  }
   const value = parseFloat(valueStr);
   if (isNaN(valueStr) || valueStr === '') return;
 
