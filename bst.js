@@ -247,8 +247,8 @@ function draw() {
 function insertNode() {
   const valueStr = document.getElementById('inputBox').value;
   if(!isValidNumber(valueStr)){
-    console.log('invalid input');
-    return
+    alert("invalid input"); 
+    return;
   }
   const value = parseFloat(valueStr);
   if (isNaN(valueStr) || valueStr === '') return;
@@ -272,8 +272,8 @@ function insertNode() {
 function deleteNode() {
   const valueStr = document.getElementById('inputBox').value;
   if(!isValidNumber(valueStr)){
-    console.log('invalid input');
-    return
+    alert("invalid input");
+    return;
   }
   const value = parseFloat(valueStr);
   if (isNaN(valueStr) || valueStr === '') return;
@@ -295,8 +295,8 @@ function deleteNode() {
 function searchNode() {
   const valueStr = document.getElementById('inputBox').value;
   if(!isValidNumber(valueStr)){
-    console.log('invalid input');
-    return
+    alert("invalid input");
+    return;
   }
   const value = parseFloat(valueStr);
   if (isNaN(valueStr) || valueStr === '') return;
